@@ -1,0 +1,214 @@
+@import "tailwindcss";
+
+/* ============================================================
+   DREWSMART — DESIGN TOKENS
+   O preto faz o trabalho pesado. O vermelho é pouco e alto.
+   Nunca fundo vermelho grande. Nunca vermelho em texto corrido.
+   ============================================================ */
+
+@theme {
+  --color-void: #050506;
+  --color-carbon: #0e0e11;
+  --color-steel: #26262b;
+  --color-blood: #ff0f00;
+  --color-blood-dim: #9c0500;
+  --color-bone: #fafaf7;
+  --color-ash: #8b8a87;
+
+  --font-display: var(--font-archivo), sans-serif;
+  --font-body: var(--font-inter-tight), sans-serif;
+  --font-mono: var(--font-jetbrains), monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--color-void);
+  color: var(--color-bone);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-blood);
+  color: var(--color-bone);
+}
+
+/* Display: Archivo caixa alta, tracking apertado */
+.display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  font-weight: 900;
+}
+
+/* Números: JetBrains Mono — cara de laboratório, não de loja */
+.num {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Eyebrow técnico */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ash);
+}
+
+/* Linha vermelha de 1px que corre na base do card */
+@keyframes scanline {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Anel pulsante do hotspot — 1.5s */
+@keyframes hotspot-pulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Foco visível — a11y não é opcional */
+:focus-visible {
+  outline: 2px solid var(--color-blood);
+  outline-offset: 2px;
+}
+
+/* fade do texto por ato da cinemática */
+@keyframes atofade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* "acordar" do card do catálogo — placeholder até os 12 frames de hover */
+@keyframes card-wake {
+  0% { transform: rotate(0deg) translateY(0); }
+  50% { transform: rotate(2.5deg) translateY(-4px); }
+  100% { transform: rotate(-1.5deg) translateY(-2px); }
+}
+
+/* ============================================================
+   NÍVEL 2 — interação e vida (upgrade de design)
+   ============================================================ */
+
+/* Botões — presença maior + preenchimento no hover */
+.btn {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 40px;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+  will-change: transform;
+}
+.btn:active { transform: scale(0.98); }
+.btn::after {
+  content: "→";
+  font-size: 15px;
+  transition: transform 0.3s ease;
+}
+.btn:hover::after { transform: translateX(5px); }
+
+.btn-blood {
+  background: var(--color-blood);
+  color: var(--color-bone);
+  box-shadow: 0 0 0 rgba(255, 15, 0, 0);
+}
+.btn-blood:hover {
+  background: var(--color-blood-dim);
+  box-shadow: 0 8px 32px rgba(255, 15, 0, 0.25);
+}
+
+.btn-ghost {
+  border: 1px solid var(--color-steel);
+  color: var(--color-bone);
+  background: rgba(5, 5, 6, 0.4);
+  backdrop-filter: blur(6px);
+}
+.btn-ghost::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-blood);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+  z-index: -1;
+}
+.btn-ghost:hover { border-color: var(--color-blood); }
+.btn-ghost:hover::before { transform: scaleX(1); }
+
+/* Flutuação contínua — produto "rodando" em loop */
+@keyframes drift {
+  0%   { transform: translateY(0) rotate(0deg) scale(1); }
+  50%  { transform: translateY(-30px) rotate(1.2deg) scale(1.03); }
+  100% { transform: translateY(0) rotate(0deg) scale(1); }
+}
+.drift { animation: drift 6s ease-in-out infinite; will-change: transform; }
+.drift-slow { animation: drift 8s ease-in-out infinite; will-change: transform; }
+
+/* Reveal on scroll — seções entram, não aparecem */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  /* drift é sutil e decorativo — mantém. só corta transições longas */
+  .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ============================================================
+   ACABAMENTO 10k — detalhes globais
+   ============================================================ */
+
+/* seleção de texto na cor da marca */
+::selection { background: var(--color-blood); color: var(--color-bone); }
+
+/* scrollbar discreta e no tom certo */
+* { scrollbar-width: thin; scrollbar-color: var(--color-steel) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: var(--color-void); }
+*::-webkit-scrollbar-thumb {
+  background: var(--color-steel);
+  border: 2px solid var(--color-void);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--color-blood-dim); }
+
+/* foco de teclado visível — acessibilidade + acabamento */
+:focus-visible {
+  outline: 2px solid var(--color-blood);
+  outline-offset: 2px;
+}
+
+/* rolagem suave em âncoras internas */
+html { scroll-behavior: smooth; }
+
+/* imagens nunca “piscam” brancas ao carregar */
+img { color: transparent; }
